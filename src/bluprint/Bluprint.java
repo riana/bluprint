@@ -1,6 +1,8 @@
 package bluprint;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import org.junit.Assert;
@@ -10,15 +12,17 @@ public abstract class Bluprint {
 
 	Scenario currentScenario;
 
+	List<Formatter> formatters = new ArrayList<Formatter>();
+
 	@FunctionalInterface
-	public interface AsyncContext {
+	public interface AsyncExecution {
 
 		public void run(Locker async);
 
 	}
 
 	@FunctionalInterface
-	public interface Context {
+	public interface Execution {
 
 		public void run();
 
@@ -52,70 +56,134 @@ public abstract class Bluprint {
 	}
 
 	public Bluprint() {
-
+		this.formatters.add(new ConsoleFormatter());
 	}
 
 	@Test
 	public void runTests() throws Exception {
 
 		Method[] methods = getClass().getMethods();
-		// TODO publish scenario & story status
+
+		List<ScenarioInfo> scenarios = new ArrayList<ScenarioInfo>();
 		for (Method method : methods) {
 			Scenario scn = method.getAnnotation(Scenario.class);
 			if (scn != null) {
-				System.out
-						.println("Scenario : " + scn.name() + " #" + scn.id());
+				scenarios.add(buildScenarioInfo(method));
 			}
+		}
+
+		for (Formatter formatter : this.formatters) {
+			formatter.preparingScenarios(scenarios);
 		}
 		for (Method method : methods) {
 			Scenario scn = method.getAnnotation(Scenario.class);
 			if (scn != null) {
 				this.currentScenario = scn;
-				System.out.println("Starting scenario: " + scn.name());
+				scenarioDidStart(buildScenarioInfo(method));
+
 				try {
 					method.invoke(this);
-					System.out.println("Test complete!");
-					System.out.println();
+					scenarioDidSuccess(scn);
 				} catch (Exception ae) {
-					ae.getCause().printStackTrace();
-					System.err.println("Test [FAILED]");
+					scenarioDidFail(scn, ae.getCause());
+					for (Formatter formatter : this.formatters) {
+						formatter.executionComplete();
+					}
 					Assert.fail(ae.getCause().getMessage());
 				}
 
 			}
 		}
+		for (Formatter formatter : this.formatters) {
+			formatter.executionComplete();
+		}
 
 	}
 
-	protected static void given(final String string) {
-		System.out.println("\tGiven " + string);
+	private ScenarioInfo buildScenarioInfo(final Method method) {
+		Scenario scn = method.getAnnotation(Scenario.class);
+		PrimaryActor actor = method.getAnnotation(PrimaryActor.class);
+		Goal goal = method.getAnnotation(Goal.class);
+		Id id = method.getAnnotation(Id.class);
+
+		ScenarioInfo scenario = new ScenarioInfo();
+		scenario.setName(scn.value());
+
+		if (id != null) {
+			scenario.setId(id.value());
+		}
+
+		if (actor != null) {
+			scenario.setPrimaryActor(actor.value());
+		}
+		if (goal != null) {
+			scenario.setGoal(goal.value());
+		}
+		return scenario;
 	}
 
-	protected static void when(final String string) {
-		System.out.println("\t> When " + string);
+	protected void given(final String givenText) {
+		handleGiven(givenText);
 	}
 
-	protected static void when(final String string, final AsyncContext object) {
-		System.out.println("\t> When " + string);
+	protected void when(final String whenText) {
+		handleWhen(whenText);
+	}
+
+	protected void when(final String whenText, final AsyncExecution object) {
+		handleWhen(whenText);
 		Locker locker = new Locker();
 		locker.lock();
 		object.run(locker);
 		locker.waitEnd();
 	}
 
-	protected static void then(final String string, final AsyncContext object) {
+	protected void then(final String thenText, final AsyncExecution object) {
+		handleThen(thenText);
 		Locker locker = new Locker();
 		locker.lock();
 		object.run(locker);
-		System.out.println("\t=> " + string);
-
 		locker.waitEnd();
 	}
 
-	protected static void then(final String string, final Context object) {
+	protected void then(final String thenText, final Execution object) {
+		handleThen(thenText);
 		object.run();
-		System.out.println("\t=> " + string);
-
 	}
 
+	private void scenarioDidStart(final ScenarioInfo scenarioInfo) {
+		for (Formatter formatter : this.formatters) {
+			formatter.startScenario(scenarioInfo);
+		}
+	}
+
+	private void scenarioDidFail(final Scenario scn, final Throwable cause) {
+		for (Formatter formatter : this.formatters) {
+			formatter.scenarioFailed(cause);
+		}
+	}
+
+	private void scenarioDidSuccess(final Scenario scn) {
+		for (Formatter formatter : this.formatters) {
+			formatter.scenarioSucceed();
+		}
+	}
+
+	private void handleGiven(final String givenText) {
+		for (Formatter formatter : this.formatters) {
+			formatter.given(givenText);
+		}
+	}
+
+	private void handleWhen(final String whenText) {
+		for (Formatter formatter : this.formatters) {
+			formatter.when(whenText);
+		}
+	}
+
+	private void handleThen(final String thenText) {
+		for (Formatter formatter : this.formatters) {
+			formatter.then(thenText);
+		}
+	}
 }
