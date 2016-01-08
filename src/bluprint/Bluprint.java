@@ -12,7 +12,7 @@ public abstract class Bluprint {
 
 	Scenario currentScenario;
 
-	List<Formatter> formatters = new ArrayList<Formatter>();
+	List<Reporter> reporters = new ArrayList<Reporter>();
 
 	@FunctionalInterface
 	public interface AsyncExecution {
@@ -56,7 +56,7 @@ public abstract class Bluprint {
 	}
 
 	public Bluprint() {
-		this.formatters.add(new ConsoleFormatter());
+		this.reporters.add(new ConsoleReporter());
 	}
 
 	@Test
@@ -72,8 +72,8 @@ public abstract class Bluprint {
 			}
 		}
 
-		for (Formatter formatter : this.formatters) {
-			formatter.preparingScenarios(scenarios);
+		for (Reporter reporter : this.reporters) {
+			reporter.preparingScenarios(scenarios);
 		}
 		for (Method method : methods) {
 			Scenario scn = method.getAnnotation(Scenario.class);
@@ -86,16 +86,16 @@ public abstract class Bluprint {
 					scenarioDidSuccess(scn);
 				} catch (Exception ae) {
 					scenarioDidFail(scn, ae.getCause());
-					for (Formatter formatter : this.formatters) {
-						formatter.executionComplete();
+					for (Reporter reporter : this.reporters) {
+						reporter.executionComplete();
 					}
 					Assert.fail(ae.getCause().getMessage());
 				}
 
 			}
 		}
-		for (Formatter formatter : this.formatters) {
-			formatter.executionComplete();
+		for (Reporter reporter : this.reporters) {
+			reporter.executionComplete();
 		}
 
 	}
@@ -152,38 +152,38 @@ public abstract class Bluprint {
 	}
 
 	private void scenarioDidStart(final ScenarioInfo scenarioInfo) {
-		for (Formatter formatter : this.formatters) {
-			formatter.startScenario(scenarioInfo);
+		for (Reporter reporter : this.reporters) {
+			reporter.startScenario(scenarioInfo);
 		}
 	}
 
 	private void scenarioDidFail(final Scenario scn, final Throwable cause) {
-		for (Formatter formatter : this.formatters) {
-			formatter.scenarioFailed(cause);
+		for (Reporter reporter : this.reporters) {
+			reporter.scenarioFailed(cause);
 		}
 	}
 
 	private void scenarioDidSuccess(final Scenario scn) {
-		for (Formatter formatter : this.formatters) {
-			formatter.scenarioSucceed();
+		for (Reporter reporter : this.reporters) {
+			reporter.scenarioSucceed();
 		}
 	}
 
 	private void handleGiven(final String givenText) {
-		for (Formatter formatter : this.formatters) {
-			formatter.given(givenText);
+		for (Reporter reporter : this.reporters) {
+			reporter.given(givenText);
 		}
 	}
 
 	private void handleWhen(final String whenText) {
-		for (Formatter formatter : this.formatters) {
-			formatter.when(whenText);
+		for (Reporter reporter : this.reporters) {
+			reporter.when(whenText);
 		}
 	}
 
 	private void handleThen(final String thenText) {
-		for (Formatter formatter : this.formatters) {
-			formatter.then(thenText);
+		for (Reporter reporter : this.reporters) {
+			reporter.then(thenText);
 		}
 	}
 }

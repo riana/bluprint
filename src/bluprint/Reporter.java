@@ -2,7 +2,7 @@ package bluprint;
 
 import java.util.List;
 
-public interface Formatter {
+public interface Reporter {
 
 	void preparingScenarios(List<ScenarioInfo> scenarios);
 

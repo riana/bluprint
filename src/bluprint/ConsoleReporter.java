@@ -2,7 +2,7 @@ package bluprint;
 
 import java.util.List;
 
-public class ConsoleFormatter implements Formatter {
+public class ConsoleReporter implements Reporter {
 
 	enum State {
 		Given, When, Then
