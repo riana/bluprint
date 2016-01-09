@@ -1,5 +1,6 @@
-.gradle
 .settings
+bin
 .classpath
 .project
-bluprint-demo/bin
+/build/
+.gradle
