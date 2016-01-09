@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    //testCompile group: 'io.bluprint', name: 'bluprint', version: '1.0'
     testCompile(project(":bluprint-bdd"))
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }

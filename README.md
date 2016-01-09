@@ -18,7 +18,35 @@ Bluprint is built with 3 primary goals :
 
 ### Installation
 
-Maven and gradle installation coming soon. For now on, download the rep and integrate it manually in your project.
+#### With Gradle (Recommended)
+Add **jcenter** to your **gradle** build file. Then add bluprint as a dependency.
+
+```gradle-2
+repositories {
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'io.bluprint', name: 'bluprint', version: '1.0'
+}
+```
+
+#### With Maven
+
+Add the bluprint dependency inside your **pom.xml**
+
+```xml
+<dependency>
+   <groupId>io.bluprint</groupId>
+   <artifactId>bluprint</artifactId>
+   <version>1.0</version>
+   <type>jar</type>
+</dependency>
+```
+
+#### Manual download
+
+Download the [bluprint jar](https://bintray.com/artifact/download/riana/riana.io/io/bluprint/bluprint/1.0/bluprint-1.0.jar) and add it to your project classpath. Also add JUnit 4+.
 
 ### Simple test case
 
