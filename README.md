@@ -16,6 +16,10 @@ Bluprint is built with 3 primary goals :
 
 ## How to use it
 
+### Installation
+
+Maven and gradle installation coming soon. For now on, download the rep and integrate it manually in your project.
+
 ### Simple test case
 
 1. Create a test class and extend the *Bluprint* class
