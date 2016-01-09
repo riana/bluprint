@@ -38,9 +38,19 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
 			groupId project.group
     		artifactId 'bluprint'
     		version project.version
+    		
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Simple and tiny Behavior driven development framework for Java')
+            }
+            
+			
 		}
 	}
 }
