@@ -5,7 +5,7 @@ Simple and tiny [Behavior driven development](https://fr.wikipedia.org/wiki/Beha
 ## The story behind the code
 After years of using [JBehave](http://jbehave.org/) writing *story* files and  *step* classes to execute them on large scale projects, I struggled to maintain all of the stories and associated steps. I sometimes even spent more time fixing and factorizing *steps* instead of building value features into my apps. Don't get me wrong, I really enjoyed the [JBehave](http://jbehave.org/) framework.
 
-But last year I mainly worked on Javascript projects with [Jasmine](http://jasmine.github.io/), [Karma](http://karma-runner.github.io/0.13/index.html) and [Mocha](https://mochajs.org/#features) and  I really enjoyed writing tests in the "*describe*, *it*" way. I also found it more productive to have both the textual description and the executing code in the same place, and the report generation after execution.
+But last year I mainly worked on Javascript projects with [Jasmine](http://jasmine.github.io/), [Karma](http://karma-runner.github.io/0.13/index.html) and [Mocha](https://mochajs.org/#features) and  I really enjoyed writing tests in the "*describe*, *it*" way. I also found it more productive to have both the textual description and the executing code in the same place.
 
 I tried to reproduce this way of writing test in Java when I worked on Java applications. **Then Bluprint was born.**
 
