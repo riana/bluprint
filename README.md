@@ -133,3 +133,7 @@ public class AsynchronousTestDemo extends Bluprint{
 }
 
 ```
+
+## License
+
+Bluprint is released under the **Apache License Version 2.0**.
